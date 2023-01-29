@@ -1,31 +1,31 @@
 # ERP-System-DevOps
 
 ## Dependincies
-[sudo apt-get install git
-sudo apt install python3.10
-sudo apt-get install python3-dev
-sudo apt-get install python3-dev
-sudo apt-get install python3-setuptools python3-pip
-sudo apt-get install virtualenv
-sudo apt install python3.10-venv
-sudo apt-get install software-properties-common
-sudo apt-get install redis-server
-sudo apt-get install xvfb libfontconfig wkhtmltopdf
-sudo apt-get install libmysqlclient-dev]
+        sudo apt-get install git
+        sudo apt install python3.10
+        sudo apt-get install python3-dev
+        sudo apt-get install python3-dev
+        sudo apt-get install python3-setuptools python3-pip
+        sudo apt-get install virtualenv
+        sudo apt install python3.10-venv
+        sudo apt-get install software-properties-common
+        sudo apt-get install redis-server
+        sudo apt-get install xvfb libfontconfig wkhtmltopdf
+        sudo apt-get install libmysqlclient-dev
 
 ## Database 
-sudo apt install mariadb-server
-sudo mysql_secure_installation
-        Switch to unix_socket authentication [Y/n]: Y
-        Change the root password? [Y/n]: Y
-        Remove anonymous users? [Y/n] Y
-        Disallow root login remotely? [Y/n]: N
-        Remove test database and access to it? [Y/n]: Y
-        Reload privilege tables now? [Y/n]: Y
+        sudo apt install mariadb-server
+        sudo mysql_secure_installation
+ Switch to unix_socket authentication [Y/n]: Y
+ Change the root password? [Y/n]: Y
+ Remove anonymous users? [Y/n] Y
+ Disallow root login remotely? [Y/n]: N
+ Remove test database and access to it? [Y/n]: Y
+ Reload privilege tables now? [Y/n]: Y
 
 sudo nano /etc/mysql/mariadb.conf.d/50-server.cnf
        
-       `[server]
+        [server]
         user = mysql
         pid-file = /run/mysqld/mysqld.pid
         socket = /run/mysqld/mysqld.sock
@@ -46,41 +46,41 @@ sudo nano /etc/mysql/mariadb.conf.d/50-server.cnf
         collation-server = utf8mb4_unicode_ci      
  
         [mysql]
-        default-character-set = utf8mb4`
+        default-character-set = utf8mb4
 
 sudo systemctl restart mariadb.service
 
 ## Nginx 
-`sudo apt install curl 
-curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash
-source ~/.profile
-nvm install 16.15.0
-sudo apt-get install npm
-sudo npm install -g yarn`
+        sudo apt install curl 
+        curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash
+        source ~/.profile
+        nvm install 16.15.0
+        sudo apt-get install npm
+        sudo npm install -g yarn
 
 ## Frappe-Bench 
-`sudo pip3 install frappe-bench
-bench init --frappe-branch version-14 frappe-bench
-cd frappe-bench/
-bench new-site site1.local
-bench get-app payments
-bench get-app --branch version-14 erpnext
-bench --site site1.local install-app erpnext
-bench --site site1.local enable-scheduler
-bench --site site1.local set-maintenance-mode off
-sudo bench setup production [frappe-user]
-bench setup nginx
-bench config dns_multitenant on
-sudo ln -s `pwd`/config/nginx.conf /etc/nginx/conf.d/frappe-bench.conf
-sudo service nginx reload`
+        sudo pip3 install frappe-bench
+        bench init --frappe-branch version-14 frappe-bench
+        cd frappe-bench/
+        bench new-site site1.local
+        bench get-app payments
+        bench get-app --branch version-14 erpnext
+        bench --site site1.local install-app erpnext
+        bench --site site1.local enable-scheduler
+        bench --site site1.local set-maintenance-mode off
+        sudo bench setup production [frappe-user]
+        bench setup nginx
+        bench config dns_multitenant on
+        sudo ln -s `pwd`/config/nginx.conf /etc/nginx/conf.d/frappe-bench.conf
+        sudo service nginx reload
 
 ## Supervisor
-`sudo apt-get install supervisor
-bench setup supervisor
-sudo ln -s `pwd`/config/supervisor.conf /etc/supervisor/conf.d/frappe-bench.conf
+        sudo apt-get install supervisor
+        bench setup supervisor
+        sudo ln -s `pwd`/config/supervisor.conf /etc/supervisor/conf.d/frappe-bench.conf
 
-sudo systemctl restart supervisor.service mariadb.service redis-server.service
-sudo supervisorctl restart all`
+        sudo systemctl restart supervisor.service mariadb.service redis-server.service
+        sudo supervisorctl restart all
 
 ## Result 
 
