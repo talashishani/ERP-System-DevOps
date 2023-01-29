@@ -1,0 +1,13 @@
+---
+- hosts: "{{ server_name }}"
+  gather_facts: no
+  vars:
+    my_branch: "{{ branchi }}"
+    serveruser: "{{ server_user }}"
+
+  tasks:
+    - name: Auto Up
+      command:
+        docker compose up -d
+      args:
+        chdir: /home/{{server_user}}/{{branchi}}
