@@ -1,0 +1,71 @@
+version: '3'
+services:
+  frappe:
+    image: gitlab.com:5050/talashishani/docker:dev
+    ports:
+     - "9090:80"
+    volumes:
+      - conf:/home/tala/frappe-bench/config/
+      - sites:/home/tala/frappe-bench/sites/
+      - nginx2:/etc/nginx/conf.d/
+      - supervisor2:/etc/supervisor/conf.d/
+
+  db:
+    image: mariadb:10.6
+    restart: always
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --skip-character-set-client-handshake
+      - --innodb_buffer_pool_size=2G
+      - --innodb_log_file_size=10G
+      - --max_allowed_packet=5G
+      - --innodb-file-format=barracuda
+    environment:
+      - MYSQL_ROOT_PASSWORD=0000
+    ports:
+      - "6033:3306"
+    volumes:
+      - database:/var/lib/mysql
+
+  
+
+  redis-cache:
+    container_name: redis-cache
+    hostname: redis
+    image: redis
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis:/data
+
+  redis-queue:
+    container_name: redis-queue
+    hostname: redis
+    image: redis
+    command: ["redis-server", "--appendonly", "yes"]
+
+  redis-socketio:
+    container_name: redis-socketio
+    hostname: redis
+    image: redis
+    command: ["redis-server", "--appendonly", "yes"]
+ 
+  redis-commander:
+    container_name: redis-commander
+    hostname: redis-commander
+    image: rediscommander/redis-commander:latest
+    build: .
+    restart: always
+    environment:
+    - REDIS_HOSTS=local:redis:12345
+    ports:
+    - 8081:8081
+
+
+volumes:
+  conf:
+  sites:
+  nginx2:
+  supervisor2:
+  database: 
+  redis:
