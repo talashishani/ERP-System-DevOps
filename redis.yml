@@ -1,0 +1,23 @@
+- hosts: "{{ server_name }}"
+  gather_facts: no
+  vars:
+    my_branch: "{{ branchi }}"
+    frappe_image: "{{ image }}"
+    redis_image: "{{ redisimage }}"
+    serveruser: "{{ server_user }}"
+
+
+  tasks:
+    - name: redis host
+      ansible.builtin.command:
+        docker compose exec "{{ image }}" bash -c "cd ~/frappe-bench && bench set-redis-cache-host "{{ redisimage }}""
+      args:
+        chdir: /home/{{server_user}}/{{branchi}}
+      ansible.builtin.command:
+        docker compose exec "{{ image }}" bash -c "cd ~/frappe-bench && bench set-redis-queue-host "{{ redisimage }}""
+      args:
+        chdir: /home/{{server_user}}/{{branchi}}
+      ansible.builtin.command:
+        docker compose exec "{{ image }}" bash -c "cd ~/frappe-bench && bench set-redis-socketio-host "{{ redisimage }}""
+      args:
+        chdir: /home/{{server_user}}/{{branchi}}
