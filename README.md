@@ -1,7 +1,7 @@
 # ERP-System-DevOps
 
 ## Dependincies
-sudo apt-get install git
+`sudo apt-get install git
 sudo apt install python3.10
 sudo apt-get install python3-dev
 sudo apt-get install python3-dev
@@ -11,7 +11,7 @@ sudo apt install python3.10-venv
 sudo apt-get install software-properties-common
 sudo apt-get install redis-server
 sudo apt-get install xvfb libfontconfig wkhtmltopdf
-sudo apt-get install libmysqlclient-dev
+sudo apt-get install libmysqlclient-dev`
 
 ## Database 
 sudo apt install mariadb-server
@@ -51,15 +51,15 @@ sudo nano /etc/mysql/mariadb.conf.d/50-server.cnf
 sudo systemctl restart mariadb.service
 
 ## Nginx 
-sudo apt install curl 
+`sudo apt install curl 
 curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash
 source ~/.profile
 nvm install 16.15.0
 sudo apt-get install npm
-sudo npm install -g yarn
+sudo npm install -g yarn`
 
 ## Frappe-Bench 
-sudo pip3 install frappe-bench
+`sudo pip3 install frappe-bench
 bench init --frappe-branch version-14 frappe-bench
 cd frappe-bench/
 bench new-site site1.local
@@ -72,15 +72,15 @@ sudo bench setup production [frappe-user]
 bench setup nginx
 bench config dns_multitenant on
 sudo ln -s `pwd`/config/nginx.conf /etc/nginx/conf.d/frappe-bench.conf
-sudo service nginx reload
+sudo service nginx reload`
 
 ## Supervisor
-sudo apt-get install supervisor
+`sudo apt-get install supervisor
 bench setup supervisor
 sudo ln -s `pwd`/config/supervisor.conf /etc/supervisor/conf.d/frappe-bench.conf
 
 sudo systemctl restart supervisor.service mariadb.service redis-server.service
-sudo supervisorctl restart all
+sudo supervisorctl restart all`
 
 ## Result 
 
