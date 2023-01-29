@@ -1,7 +1,7 @@
 # ERP-System-DevOps
 
 ## Dependincies
-`sudo apt-get install git
+[sudo apt-get install git
 sudo apt install python3.10
 sudo apt-get install python3-dev
 sudo apt-get install python3-dev
@@ -11,7 +11,7 @@ sudo apt install python3.10-venv
 sudo apt-get install software-properties-common
 sudo apt-get install redis-server
 sudo apt-get install xvfb libfontconfig wkhtmltopdf
-sudo apt-get install libmysqlclient-dev`
+sudo apt-get install libmysqlclient-dev]
 
 ## Database 
 sudo apt install mariadb-server
