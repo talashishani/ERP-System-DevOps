@@ -1,0 +1,14 @@
+- hosts: "{{ server_name }}"
+  gather_facts: no
+  vars:
+    my_branch: "{{ branchi }}"
+    frappe_image: "{{ image }}"
+    db_image: "{{ dbimage }}"
+    serveruser: "{{ server_user }}"
+
+  tasks:
+    - name: New Site Creation
+      ansible.builtin.command:
+       docker compose exec "{{ image }}" bash -c "cd ~/frappe-bench && bench new-site "{{ branchi }}".com --db-name "{{ branchi }}"db --mariadb-root-password 0000 --admin-password 123456"
+      args:
+        chdir: /home/{{server_user}}/{{branchi}}
