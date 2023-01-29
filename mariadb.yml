@@ -1,0 +1,14 @@
+- hosts: "{{ server_name }}"
+  gather_facts: no
+  vars:
+    my_branch: "{{ branchi }}"
+    frappe_image: "{{ image }}"
+    db_image: "{{ dbimage }}"
+    serveruser: "{{ server_user }}"
+
+  tasks:
+    - name: mariadb host
+      ansible.builtin.command:
+        docker compose exec "{{ image }}" bash -c "cd ~/frappe-bench && bench set-mariadb-host "{{ dbimage }}""
+      args:
+        chdir: /home/{{server_user}}/{{branchi}}
