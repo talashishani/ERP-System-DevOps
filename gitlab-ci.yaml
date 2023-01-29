@@ -1,0 +1,187 @@
+stages:
+- build
+- pull
+- up
+- maria
+- redis
+- newsite
+- sitestatus
+
+#=======================================
+
+workflow:
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "dev"' 
+      variables: 
+        serv_name: localhost
+        serv_user: tala
+        image_fra: frappe
+        redis_image: redis
+        db_image: db
+        branch1: $CI_COMMIT_BRANCH
+
+    - if: '$CI_COMMIT_BRANCH == "main"'
+      variables: 
+        serv_name: server1
+        serv_user: db
+        image_fra: frappe-1
+        redis_image: redis-1
+        db_image: db-1
+        branch1: $CI_COMMIT_BRANCH
+
+    - if: '$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME == "pre-release"'
+      variables: 
+        serv_name: server1
+        serv_user: db
+        image_fra: frappe-2
+        redis_image: redis-2
+        db_image: db-2
+        branch1: $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME
+
+#============================================
+
+build_docker:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+
+  script:
+    - docker build -t $CI_REGISTRY_IMAGE:$branch1 --build-arg branchh=$branch1 .
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+    - docker push $CI_REGISTRY_IMAGE:$branch1
+  
+#============================================
+pull_docker:
+  stage: pull
+  before_script:
+    - 'command -v ssh-agent >/dev/null || ( apk add --update openssh )' 
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - echo "$SSH_PRIVATE_KEY" >> ~/.ssh/id_rsa
+    - ssh-keyscan $SERVER_IPADDRESS >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+
+  script:
+    - cd ~/.ssh 
+    - ssh -o StrictHostKeyChecking=no $SSH_USER@$SERVER_IPADDRESS "cd /home/tala && ansible-playbook pull.yml  
+      -e "branchi=$branch1" 
+      -e "server_name=$serv_name"
+      -e "server_user=$serv_user""
+
+#============================================
+
+up_docker:
+  stage: up
+  before_script:
+    - 'command -v ssh-agent >/dev/null || ( apk add --update openssh )' 
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - echo "$SSH_PRIVATE_KEY" >> ~/.ssh/id_rsa
+    - ssh-keyscan $SERVER_IPADDRESS >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+
+  script:
+    - cd ~/.ssh 
+    - ssh -o StrictHostKeyChecking=no $SSH_USER@$SERVER_IPADDRESS "cd /home/tala && ansible-playbook up.yml  
+      -e "branchi=$branch1" 
+      -e "server_name=$serv_name"
+      -e "server_user=$serv_user""
+
+#============================================
+
+maria_host:
+  stage: maria
+  before_script:
+    - 'command -v ssh-agent >/dev/null || ( apk add --update openssh )' 
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - echo "$SSH_PRIVATE_KEY" >> ~/.ssh/id_rsa
+    - ssh-keyscan $SERVER_IPADDRESS >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+
+  script:
+    - cd ~/.ssh 
+    - ssh -o StrictHostKeyChecking=no $SSH_USER@$SERVER_IPADDRESS "cd /home/tala && ansible-playbook mariadb.yml  
+      -e "branchi=$branch1" 
+      -e "server_name=$serv_name"
+      -e "image=$image_fra"
+      -e "dbimage=$db_image"
+      -e "server_user=$serv_user""
+
+#============================================
+
+redis_host:
+  stage: redis
+  before_script:
+    - 'command -v ssh-agent >/dev/null || ( apk add --update openssh )' 
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - echo "$SSH_PRIVATE_KEY" >> ~/.ssh/id_rsa
+    - ssh-keyscan $SERVER_IPADDRESS >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+
+  script:
+    - cd ~/.ssh 
+    - ssh -o StrictHostKeyChecking=no $SSH_USER@$SERVER_IPADDRESS "cd /home/tala && ansible-playbook redis.yml  
+      -e "redisimage=$redis_image"
+      -e "branchi=$branch1" 
+      -e "server_name=$serv_name"
+      -e "image=$image_fra"
+      -e "server_user=$serv_user""
+
+#============================================
+
+new_site:
+  stage: newsite
+  before_script:
+    - 'command -v ssh-agent >/dev/null || ( apk add --update openssh )' 
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - echo "$SSH_PRIVATE_KEY" >> ~/.ssh/id_rsa
+    - ssh-keyscan $SERVER_IPADDRESS >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+
+  script:
+    - cd ~/.ssh 
+    - ssh -o StrictHostKeyChecking=no $SSH_USER@$SERVER_IPADDRESS "cd /home/tala && ansible-playbook newsite.yml  
+      -e "branchi=$branch1" 
+      -e "server_name=$serv_name"
+      -e "image=$image_fra"
+      -e "server_user=$serv_user""
+
+#=============================================
+
+site-status:
+  stage: sitestatus
+  before_script:
+    - 'command -v ssh-agent >/dev/null || ( apk add --update openssh )' 
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - echo "$SSH_PRIVATE_KEY" >> ~/.ssh/id_rsa
+    - ssh-keyscan $SERVER_IPADDRESS >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+
+  script:
+    - cd ~/.ssh 
+    - ssh -o StrictHostKeyChecking=no $SSH_USER@$SERVER_IPADDRESS "cd /home/tala && ansible-playbook status.yml  
+      -e "branchi=$branch1" 
+      -e "server_name=$serv_name"
+      -e "server_user=$serv_user""
+
+
+
+-----------
+
